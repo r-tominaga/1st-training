@@ -14,25 +14,22 @@ class Sample4
 
       if(res == 1){
         System.out.println("1が入力されました。");
-      }
-      else if(res == 2){
+      } else if (res == 2) {
         System.out.println("2が入力されました。");
-      }
-      else{
+      } else {
         System.out.println("1か2を入力してください。");
-      }
+        String str2 = br.readLine();
+        int res2 =Integer.parseInt(str2);
 
-      String str2 = br.readLine();
-      int res2 =Integer.parseInt(str2);
+//if(1 ==  res2)になることも
+        if(res2 == 1) {
+          System.out.println("1が入力されました。");
+        } else if (res2 == 2) {
+          System.out.println("2が入力されました。");
+        } else {
+          System.out.println("1か2を入力してください。");
+        }
 
-      if(res2 == 1){
-        System.out.println("1が入力されました。");
-      }
-      else if(res2 == 2){
-        System.out.println("2が入力されました。");
-      }
-      else{
-        System.out.println("1か2を入力してください。");
       }
 
     }

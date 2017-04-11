@@ -14,7 +14,9 @@ class Sample1
 
     if(res == 1)
       System.out.println("1が入力されました。");
-      System.out.println("処理を終了します。");
+
+
+    System.out.println("処理を終了します。");
   }
 
 }

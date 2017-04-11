@@ -16,6 +16,7 @@ class Sample2
         System.out.println("1が入力されました。");
         System.out.println("1が選択されました。");
       }
+      
       System.out.println("処理を終了します。");
     }
 }
