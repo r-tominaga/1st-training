@@ -12,10 +12,10 @@ class Sample9
      String str = br.readLine();
      int res = Integer.parseInt(str);
 
-    for(int i=1; i<=10; i++){
+    for(int i=1; i>=res; i++){
       System.out.println(i + "番目の処理です。");
-      if(i == res)
-        break;
+      //if(i == res)
+        //break;
     }
   }
 }

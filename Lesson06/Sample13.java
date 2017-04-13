@@ -19,4 +19,3 @@ class Sample13
          System.out.println(sum);
      }
    }
-  

@@ -2,15 +2,15 @@ class Sample8
 {
   public static void main(String[] args)
   {
-    boolean bl = false;
+    boolean boo = false;
     for(int i=0; i<5; i++){
       for(int j=0; j<5; j++){
-        if(bl == false){
+        if(boo){
           System.out.print("*");
-          bl = true;
+          boo = true;
         }else{
           System.out.print("-");
-          bl = false;
+          boo = false;
         }
       }
       System.out.print("\n");
