@@ -21,5 +21,4 @@ class Sample1{
     System.out.println("車のナンバーは" + car2.num + "です。");
     System.out.println("車のガソリン量は" + car2.gas + "です。");
   }
-
 }
