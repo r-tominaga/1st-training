@@ -18,6 +18,6 @@ class SampleP3{
 
     sb.insert(pose, 'a');
 
-    System.out.println(str1 + "を逆順にすると" + sb + "です。");
+    System.out.println(str1 + "の" + str1 + "番目にaを追加すると" + sb + "です。");
   }
 }
