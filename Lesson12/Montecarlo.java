@@ -12,6 +12,6 @@ class Montecarlo{
           ;
         }
     }
-    System.out.println(4*n);
+    System.out.println(4*n/100000000);
   }
 }
