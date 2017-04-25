@@ -4,11 +4,25 @@ import java.util.Map.Entry;
 
 class WordBook{
   public static void main(String[] args) {
-    String str ="dog, cat, cow cow 'Pig' 2elephant bird bird. bull stone right left king low law reel fire tree knight wall ball ball pop pop law left stone cow egg egg egg egg dream fire";
-    String[] tango = str.split("[ ,.\"\'’]+");
+    if(args.length != 1){
+      System.out.println("ファイル名を正しく指定してください。");
+      System.exit(1);
+    }
+    try{
+
+    BufferedReader br = new BufferedReader(new FileReader(args[0]));
+
+    String str;
+
+    while((str = br.readLine()) != null){
+        ;
+    }
+
+    String[] tango = str.split("[ ,.\"\'’1234567890]+");
+
     for(int i=0; i<tango.length; i++){
       System.out.println(tango[i]);
-      }
+    }
 
     Map<String, Integer> m = new HashMap<String, Integer>();
 
@@ -19,7 +33,7 @@ class WordBook{
         v = m.get(s) + 1;
         }else{
         // Mapに未登録
-        v = 1;
+          v = 1;
         }
         m.put(s, v);
     }
@@ -27,6 +41,10 @@ class WordBook{
     for(Entry<String, Integer> entry : m.entrySet()){
       System.out.printf("%s %d%n", entry.getKey(), entry.getValue());
     }
-
+    br.close();
+   }
+    catch(IOException e){
+      System.out.println("入出力エラーです。");
     }
   }
+}
