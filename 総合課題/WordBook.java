@@ -92,6 +92,8 @@ class WordBook{
     }
     catch(IOException e){
       System.out.println("入出力エラーです。");
+    }catch(IndexOutOfBoundsException e){
+      System.out.println("ファイルサイズエラーです。");
     }
   }
 }
