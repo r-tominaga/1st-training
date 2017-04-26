@@ -9,19 +9,21 @@ class WordBook{
       System.exit(1);
     }
     try{
+    ArrayList<String> tango = new ArrayList<String>();
 
     BufferedReader br = new BufferedReader(new FileReader(args[0]));
 
     String str;
 
     while((str = br.readLine()) != null){
-        ;
+        String[] strs = str.split("[ ,.\"\'’1234567890]+");
+        for(String s:strs)
+        tango.add (s);
     }
 
-    String[] tango = str.split("[ ,.\"\'’1234567890]+");
-
-    for(int i=0; i<tango.length; i++){
-      System.out.println(tango[i]);
+    for(int i=0; i<100; i++){
+      String show = tango.get(i);
+      System.out.println(show);
     }
 
     Map<String, Integer> m = new HashMap<String, Integer>();
