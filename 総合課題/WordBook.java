@@ -5,6 +5,9 @@ import java.util.regex.*;
 
 class WordBook{
   public static void main(String[] args) throws IOException{
+    BufferedReader remove =
+      new BufferedReader(new FileReader("remove.txt"));
+
     if(args.length != 1){
       System.out.println("ファイル名を正しく指定してください。");
       System.exit(1);
@@ -25,14 +28,18 @@ class WordBook{
       BufferedReader br = new BufferedReader(new FileReader(args[0]));
       BufferedReader br2 = new BufferedReader(new InputStreamReader(System.in));
 
-      String str;
+      String text;
 
-      while((str = br.readLine()) != null){
-          String str2 = str.replaceAll("[0-9]+" , "").trim().toLowerCase();
-          String[] strs = str2.split("[\\s ,.\"\'’\n\b\t1234567890]+");
-          for(String s:strs)
-            tango.add (s);
+      while((text = br.readLine()) != null){
+        String str = text.replaceAll("[0-9]+" , "").trim().toLowerCase();
+        String[] strs = str.split("[\\s ,.\"\'’\n\b%{};:$#&@^\\\\`!-=+*<>/\t1234567890\\[\\]]+");
+        for(String s:strs)
+          tango.add (s);
       }
+      /*テスト項目
+      for(String word : tango){
+        System.out.println(word);
+      }*/
 
       Map<String, Integer> m1 = new HashMap<String, Integer>();
 
@@ -49,7 +56,11 @@ class WordBook{
       }
 
       for(Entry<String, Integer> entry : m1.entrySet()){
-        System.out.printf("%s %d%n", entry.getKey(), entry.getValue());
+        //System.out.printf("%s %d%n", entry.getKey(), entry.getValue());
+      }
+      String s;
+      while(( s = remove.readLine()) != null){
+        m1.remove(s);
       }
 
       List<Entry<String, Integer>> list_entries = new ArrayList<Entry<String, Integer>>(m1.entrySet());
@@ -66,7 +77,7 @@ class WordBook{
 
       for (int i=0; i<list_entries.size(); i++){
         entry2.add(list_entries.get(i));
-        System.out.println(entry2.get(i).getKey() + " : " + entry2.get(i).getValue());
+        //System.out.println(entry2.get(i).getKey() + " : " + entry2.get(i).getValue());
       }
 
       Map<String, String> m2 = new HashMap<String, String>();
