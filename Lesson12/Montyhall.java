@@ -1,17 +1,23 @@
 import java.util.Random;
+import java.io.*;
 class Montyhall{
   public static void main(String[] args) {
-    Random rnd1 = new Random();
-    Random rnd2 = new Random();
-    Random rnd3 = new Random();
+    try{
+      Random rnd1 = new Random();
+      Random rnd2 = new Random();
+      Random rnd3 = new Random();
 
-    int sld = 0;
-    int cord = 0;
-    int cntAC = 0;
-    int cntNC = 0;
-    int rand = 0;
-    int shwd = 0;
-    int n = 10000;
+      int sld = 0;
+      int cord = 0;
+      int cntAC = 0;
+      int cntNC = 0;
+      int rand = 0;
+      int shwd = 0;
+      System.out.println("何回試行しますか？");
+      BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+      String str = br.readLine();
+      int n = Integer.parseInt(str);
+
         //最初に選択するドアを決める
         for(int i=0; i<n; i++){
           int ran = rnd1.nextInt(3);
@@ -50,9 +56,11 @@ class Montyhall{
 
         }
 
-        System.out.println(cntAC);
-        System.out.println(cntNC);
-
-
-  }
+        System.out.println("常に変更したときの正解数" + cntAC);
+        System.out.println("変更しないときの正解数" + cntNC);
+        
+      }catch(IOException e) {
+        System.err.println(e.getMessage());
+      }
+    }
 }
