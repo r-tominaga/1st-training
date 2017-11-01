@@ -43,3 +43,5 @@ https://m0t0k1ch1st0ry.com/blog/2016/08/28/word2vec/
 
 Python で word2vec を使ってみる
 http://mayo.hatenablog.com/entry/2014/07/11/111432
+
+https://foolean.net/p/71
