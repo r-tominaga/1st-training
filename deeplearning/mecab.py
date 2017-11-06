@@ -12,7 +12,7 @@ sentences = word2vec.Text8Corpus('./out.txt')
 # size      : 出力するベクトルの次元数
 # min_count : この数値よりも登場回数が少ない単語は無視する
 # window    : 一つの単語に対してこの数値分だけ前後をチェックする
-model = word2vec.Word2Vec(sentences, size=200, min_count=2, window=5)
+model = word2vec.Word2Vec(sentences, size=200, min_count=2, window=20)
 
 # 学習結果を出力する
 model.save("sample.model")

@@ -7,5 +7,5 @@ import sys
 # 学習済みモデルのロード
 model = word2vec.Word2Vec.load("sample.model")
 
-result = model.most_similar(positive ="CNN")
+result = model.most_similar(positive ="学習")
 print(result)
