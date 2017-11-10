@@ -8,7 +8,7 @@ from datetime import datetime
 
 def split_word(tagger, content):
     word = tagger.parse(content).split(' ')
-    word = [ w.strip().decode('utf-8') for w in word ]
+    word = [ w.strip() for w in word ]
     return word
 
 def one_hot_vec(index):
@@ -17,12 +17,10 @@ def one_hot_vec(index):
     return v
 
 def padding(contents, max_word_count):
-    padded_contents = []
-    for i in range(len(contents)):
-        content = contents[i]
-        padded_contents.append(content + [ '<PAD/>' ] * (max_word_count - len(content)))
+    for content in contents :
+        content += ['<PAD/>']  * (max_word_count - len(content))
 
-    return padded_contents
+    return contents
 
 def load_data_and_labels_and_dictionaries():
     if os.path.exists(DATA_FILE) and os.path.exists(LABEL_FILE) and os.path.exists(DICTIONARY_FILE):
@@ -35,11 +33,11 @@ def load_data_and_labels_and_dictionaries():
 
         lines = [ l.split("\t") for l in list(open(RAW_FILE).readlines()) ]
         t = MeCab.Tagger('-Owakati')
-        print(lines)
 
-        contents = [ l[0].strip() for l in lines ]
+        contents = [ split_word(t, l[1]) for l in lines if len(l) is 2 ]
         contents = padding(contents, max([ len(c) for c in contents ]))
         labels   = [ one_hot_vec(int(l[0]) - 1) for l in lines ]
+        print(contents)
 
         ctr = Counter(itertools.chain(*contents))
         dictionaries     = [ c[0] for c in ctr.most_common() ]
@@ -55,7 +53,7 @@ def load_data_and_labels_and_dictionaries():
         numpy.save(LABEL_FILE,      labels)
         numpy.save(DICTIONARY_FILE, dictionaries)
 
-    return [ data, labels, dictionaries ]
+    return data, labels, dictionaries
 
 def log(content):
     time = datetime.now().strftime("%Y/%m/%d %H:%M:%S")
