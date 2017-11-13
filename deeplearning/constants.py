@@ -1,5 +1,5 @@
-NUM_TESTS         = 2000
-NUM_CLASSES       = 2
+NUM_TESTS         = 50
+NUM_CLASSES       = 4
 NUM_EPOCHS        = 10
 NUM_MINI_BATCH    = 64
 EMBEDDING_SIZE    = 128
