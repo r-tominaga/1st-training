@@ -27,7 +27,7 @@ def load_data_and_labels_and_dictionaries():
         data         = numpy.load(DATA_FILE)
         labels       = numpy.load(LABEL_FILE)
         dictionaries = numpy.load(DICTIONARY_FILE)
-
+        # print(data)
     else:
         import MeCab
 
@@ -37,7 +37,7 @@ def load_data_and_labels_and_dictionaries():
         contents = [ split_word(t, l[1]) for l in lines if len(l) is 2 ]
         contents = padding(contents, max([ len(c) for c in contents ]))
         labels   = [ one_hot_vec(int(l[0]) - 1) for l in lines ]
-        print(contents)
+        # print(contents)
 
         ctr = Counter(itertools.chain(*contents))
         dictionaries     = [ c[0] for c in ctr.most_common() ]

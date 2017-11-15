@@ -1,4 +1,4 @@
-NUM_TESTS         = 50
+NUM_TESTS         = 100
 NUM_CLASSES       = 4
 NUM_EPOCHS        = 10
 NUM_MINI_BATCH    = 64
