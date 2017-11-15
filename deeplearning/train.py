@@ -119,11 +119,6 @@ with tf.Session() as sess:
                 feed_dict={ input_x: mini_batch_x, input_y: mini_batch_y, keep: 0.5 }
             )
             log('%4dth mini batch complete. LOSS: %f, ACCR: %f' % (i + 1, v1, v2))
-            print(_)
-            print(v1)
-            print(v2)
-            print(v3)
-            print(v4)
             # Write out loss and accuracy value into summary logs for TensorBoard.
             current_step = tf.train.global_step(sess, global_step)
             writer.add_summary(v3, current_step)
