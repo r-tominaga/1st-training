@@ -69,9 +69,8 @@ train = tf.train.AdamOptimizer(0.0001).minimize(loss, global_step=global_step)
 # Measurement of accuracy and summary for TensorBoard.
 # ----------------------------------------------------------
 predict  = tf.equal(tf.argmax(predict_y, 1), tf.argmax(input_y, 1))
-aaa = tf.argmax(predict_y, 1)
-print(aaa)
-
+prediction = tf.argmax(predict_y, 1)
+real = tf.argmax(input_y, 1)
 accuracy = tf.reduce_mean(tf.cast(predict, tf.float32))
 
 loss_sum   = tf.summary.scalar('train loss', loss)
@@ -114,10 +113,14 @@ with tf.Session() as sess:
                 mini_batch_y.append(train_y[random_indice[i * NUM_MINI_BATCH + j]])
 
             # TRAINING.
-            _, v1, v2, v3, v4 = sess.run(
-                [ train, loss, accuracy, loss_sum, accr_sum ],
+            _, v1, v2, v3, v4, tr_pre, reals = sess.run(
+                [ train, loss, accuracy, loss_sum, accr_sum, prediction, real ],
                 feed_dict={ input_x: mini_batch_x, input_y: mini_batch_y, keep: 0.5 }
             )
+            print("トレ予想は:")
+            print(tr_pre)
+            print("トレ正解は")
+            print(reals)
             log('%4dth mini batch complete. LOSS: %f, ACCR: %f' % (i + 1, v1, v2))
             # Write out loss and accuracy value into summary logs for TensorBoard.
             current_step = tf.train.global_step(sess, global_step)
@@ -131,17 +134,23 @@ with tf.Session() as sess:
 
             # Evaluate the model by test data every evaluation point.
             if current_step % EVALUATE_EVERY == 0:
-                random_test_indice = np.random.permutation(100)
+                random_test_indice = np.random.permutation(640)
+                # print(random_test_indice)
                 random_test_x = test_x[random_test_indice]
                 random_test_y = test_y[random_test_indice]
+                # print(random_test_x,random_test_y)
 
-                v1, v2, v3, v4 = sess.run(
-                    [ loss, accuracy, t_loss_sum, t_accr_sum ],
-                    feed_dict={ input_x: random_test_x, input_y: random_test_y, keep: 1.0 }
+                v1, v2, v3, v4, pre, realss = sess.run(
+                    [ loss, accuracy, t_loss_sum, t_accr_sum, prediction, real ],
+                    feed_dict={ input_x: random_test_x, input_y: random_test_y, keep: 0.5 }
                 )
                 log('Testing... LOSS: %f, ACCR: %f' % (v1, v2))
                 writer.add_summary(v3, current_step)
                 writer.add_summary(v4, current_step)
+                print("evaluation予想は")
+                print(pre)
+                print("evaluation正解は")
+                print(realss)
 
     # Save the model before the program is finished.
     saver.save(sess, CHECKPOINTS_DIR + '/model-last')

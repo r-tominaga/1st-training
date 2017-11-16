@@ -23,13 +23,24 @@ with tf.Session() as sess:
 
     sess.run(tf.global_variables_initializer())
     cwd = os.getcwd()
+    input_x = tf.placeholder(tf.int32,   [ None, max_length       ])
+    input_y = tf.placeholder(tf.float32, [ None, NUM_CLASSES ])
+    keep = tf.placeholder(tf.float32)
+
     last_model = ckpt.model_checkpoint_path
     saver = tf.train.import_meta_graph("{}.meta".format(last_model))
     saver.restore(sess, last_model)
+    # t_accuracy = sess.run(accuracy,
+    #     feed_dict={ input_x: data[0], input_y:labels[0] , keep: 1.0 }
+    # )
+    prediction=tf.argmax(data[1],1)
+    best = sess.run([prediction],feed_dict={})
+    print(best)
+    # accuracy = tf.reduce_mean(tf.cast(predict, tf.float32))
+
     # Get the placeholders from the graph by name
-    input_x = graph.get_operation_by_name("input_x").outputs[0]
+    # input_x = graph.get_operation_by_name("input_x").outputs[0]
     # input_y = graph.get_operation_by_name("input_y").outputs[0]
-    dropout
     # 判別させたい文章を.txtに書き込んで
     lines = [ l.split("\t") for l in list(open('./test.txt').readlines()) ]
     t = MeCab.Tagger('-Owakati')
@@ -40,7 +51,6 @@ with tf.Session() as sess:
     print(contents)
     dictionaries_inv = { c: i for i, c in enumerate(dictionaries) }
     datum = [[ dictionaries_inv[word] for word in content ] for content in contents ]
-    # print(datum)
     datum= numpy.array(datum)
     print(datum)
     #datumにはベクトル化された文章
@@ -50,10 +60,9 @@ with tf.Session() as sess:
     # predict  = tf.equal(tf.argmax(predict_y, 1), tf.argmax(, 1))
     # print(predict)
     x, y, d = data_helper.load_data_and_labels_and_dictionaries()
-
     # Split original data into two groups for training and testing.
-    # test_x,  test_y  = x[-NUM_TESTS:], y[-NUM_TESTS:]
-    #
+    test_x,  test_y  = x[-NUM_TESTS:], y[-NUM_TESTS:]
+    random_indice = np.random.permutation(train_x_length)
     # # Property for dropout. This is probability of keeping cell.
     # keep = tf.placeholder(tf.float32)
 
