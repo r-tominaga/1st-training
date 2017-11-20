@@ -1,3 +1,5 @@
+# coding: utf-8
+
 import os
 import data_helper
 import numpy as np
