@@ -1,0 +1,199 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>開発環境構築の手順 &#8212; sphinx book 1.0 ドキュメント</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="prev" title="Hyperledger Fabric実践入門" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="id1">
+<h1>開発環境構築の手順<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<dl class="docutils">
+<dt><em>必要条件</em></dt>
+<dd>Git client
+Go - 1.7 or later (for releases before v1.0, 1.6 or later)
+MacOSの場合、Xcodeも必要
+Docker - 1.12 or later
+Docker Compose - 1.8.1 or later
+Pip</dd>
+</dl>
+<p>※gnutarをインストールしたい場合はHomebrewを用いる</p>
+<p>&gt; brew install gnu-tar –with-default-names</p>
+<blockquote>
+<div>Pipについては以下コマンドをターミナルで実行することでアップグレード可能</div></blockquote>
+<p>&gt; pip install –upgrade pip
+&gt; pip install behave nose docker-compose
+&gt; pip install -I flask==0.10.1 python-dateutil==2.2 pytz==2014.3 pyyaml==3.10 couchdb==1.0 flask-cors==2.0.1 requests==2.4.3 pyOpenSSL==16.2.0 pysha3==1.0b1 grpcio==1.0.4
+&gt; pip install urllib3 ndg-httpsclient pyasn1 ecdsa python-slugify grpcio-tools jinja2 b3j0f.aop six</p>
+<blockquote>
+<div>DockerはCE(Community Edition)を入れておけばDocker/Docker Compose/Docker Machineすべて入ってくる
+もちろん個別に入れてもよい
+<a class="reference external" href="https://www.docker.com/community-edition">https://www.docker.com/community-edition</a></div></blockquote>
+<p>インストールしたらターミナルにて</p>
+<p>&gt; docker –version
+&gt; docker-compose –version
+&gt; docker-machine –version</p>
+<p>でバージョンを確認すること</p>
+<p>Hyperledger FabricはGoで書かれているので、$ GOPATH/srcにHyperledger Fabricのソースリポジトリをクローンする必要がある</p>
+<p>&gt; cd $GOPATH/src
+&gt; mkdir -p github.com/hyperledger
+&gt; cd github.com/hyperledger</p>
+<p>ここでクローンするがその際にLinux Foundation ID(以後LFIDと呼ぶ)が必要
+したがって登録していない場合サイト( <a class="reference external" href="https://identity.linuxfoundation.org/">https://identity.linuxfoundation.org/</a> )で登録する
+また、Hyperledger FabricのソースはGerritを用いて管理しているので、SSHキーの登録が必要になる
+キーペアを用意する必要があるので以下のコマンドをターミナルで実行</p>
+<p>&gt; ssh-keygen -t rsa -C 「Ryota Tominaga <a class="reference external" href="mailto:r-tominaga&#37;&#52;&#48;gmail&#46;com">r-tominaga<span>&#64;</span>gmail<span>&#46;</span>com</a>」
+&gt; // 名前とアドレスは自分のものに変えること</p>
+<p>そうするとキーペアを保存するファイル名を聞かれるので適当に名前をつける
+そのあとパスワードを聞かれるので任意のものに設定する
+そして以下コマンド実行</p>
+<p>&gt; ssh-add ファイル名のパス(さきほど決めたもの)</p>
+<p>次にGerrit( <a class="reference external" href="https://gerrit.hyperledger.org/r/#/admin/projects/fabric">https://gerrit.hyperledger.org/r/#/admin/projects/fabric</a> )にてLFIDでログインする
+右上の隅にあるアカウント名をクリックし、ポップアップメニューからSettingsを選択
+左のサイドメニューからSSH Public Keysをクリック
+そこに作成したキーペアのうち.pubの中身(エディタで開ける)をコピーしたものを貼り付けて、Add keyをクリック
+これでSSHキーの登録は終了したので、github.com/hyperledgerにクローンする。LFIDの部分は自分のものを入力</p>
+<p>&gt; git clone <a class="reference external" href="ssh://LFID&#64;gerrit.hyperledger.org:29418/fabric">ssh://LFID&#64;gerrit.hyperledger.org:29418/fabric</a> &amp;&amp; scp -p -P 29418 <a class="reference external" href="mailto:LFID&#37;&#52;&#48;gerrit&#46;hyperledger&#46;org">LFID<span>&#64;</span>gerrit<span>&#46;</span>hyperledger<span>&#46;</span>org</a>:hooks/commit-msg fabric/.git/hooks/</p>
+<p>Hyperledger Fabricをビルドするには以下コマンド</p>
+<p>&gt; cd $GOPATH/src/github.com/hyperledger/fabric
+&gt; make dist-clean all</p>
+<p>ユニットテストを行う場合は、</p>
+<p>&gt; cd $GOPATH/src/github.com/hyperledger/fabric
+&gt; make unit-test</p>
+<p>ここまでで環境構築は終了
+ここからは開発準備としてサンプルを用いてチェーンコードを実行する</p>
+<p>&gt; mkdir -p $GOPATH/src/sacc &amp;&amp; cd $GOPATH/src/sacc
+&gt; touch sacc.go</p>
+<p>このwikiにファイル(sacc.go)が添付されているのでダウンロードして置く</p>
+<p>チェーンコードをビルドするためには以下コマンド</p>
+<p>&gt; go get -u –tags nopkcs11 github.com/hyperledger/fabric/core/chaincode/shim
+&gt; go build –tags nopkcs11</p>
+<p>Hyperledger Fabric側であらかじめ用意しているサンプルを用いる
+まずサンプルをクローンする
+/Users,/Volumes,/private,/tmpのどれかの下にクローンすること
+もし他の場所にクローンしたい場合はDockerのfile sharingの設定を変更する必要あり</p>
+<p>&gt; git clone <a class="reference external" href="https://github.com/hyperledger/fabric-samples.git">https://github.com/hyperledger/fabric-samples.git</a>
+&gt; cd fabric-samples
+&gt; curl -sSL <a class="reference external" href="https://goo.gl/iX9dek">https://goo.gl/iX9dek</a> | bash</p>
+<p>&gt; cd fabric-samples/chaincode-docker-devmode
+&gt; docker images</p>
+<p>こんな感じのが表示されればオッケー</p>
+<blockquote>
+<div>docker images
+REPOSITORY                     TAG                                  IMAGE ID            CREATED             SIZE
+hyperledger/fabric-tools       latest                               e09f38f8928d        4 hours ago         1.32 GB
+hyperledger/fabric-tools       x86_64-1.0.0                         e09f38f8928d        4 hours ago         1.32 GB
+hyperledger/fabric-orderer     latest                               0df93ba35a25        4 hours ago         179 MB
+hyperledger/fabric-orderer     x86_64-1.0.0                         0df93ba35a25        4 hours ago         179 MB
+hyperledger/fabric-peer        latest                               533aec3f5a01        4 hours ago         182 MB
+hyperledger/fabric-peer        x86_64-1.0.0                         533aec3f5a01        4 hours ago         182 MB
+hyperledger/fabric-ccenv       latest                               4b70698a71d3        4 hours ago         1.29 GB
+hyperledger/fabric-ccenv       x86_64-1.0.0                         4b70698a71d3        4 hours ago         1.29 GB</div></blockquote>
+<p>+*Terminal1*+
+以下のコマンドで、ネットワークを開始し、dev mode内にてピアを起動
+さらに、チェーンコード環境(環境変数もろもろを含んでいる)とCLIコンテナ(チェーンコードと通信するため)を立ち上げている
+チャンネルを作成し、追加するためのコマンドはCLIコンテナ内に組み込まれている
+なので、ここではそういう面倒なことは考えずに済むようになっている</p>
+<p>&gt; docker-compose -f docker-compose-simple.yaml up</p>
+<p>+*Terminal2*+
+チェーンコードをビルドして、スタートさせる</p>
+<p>&gt; docker exec -it chaincode bash</p>
+<p>続いて以下コマンドでコンパイル</p>
+<p>&gt; cd sacc
+&gt; go build</p>
+<p>以下コマンドでチェーンコード(sacc.go)を起動し、検証ピアサーバに登録する</p>
+<p>&gt; CORE_PEER_ADDRESS=peer:7051 CORE_CHAINCODE_ID_NAME=mycc:0 ./sacc</p>
+<p>+*Terminal3*+
+起動したチェーンコードをピアにインストールして使ってみる(これをやらないと以下に出てくる」peer invoke」,」peer query」といったコマンドが使えない。理由は、ピアがそのチェーンコードのことを知らないため認識できないから)
+※ここでいうinstallとは、ピア上にあるファイルシステムにチェーンコードを設置すること
+※また、instantiateとは、チェーンコードコンテナをスタートさせることを指す</p>
+<p>ユーザーaに所持金として10を初期値に設定</p>
+<p>&gt; docker exec -it cli bash
+&gt; peer chaincode install -p chaincodedev/chaincode/sacc -n mycc -v 0
+&gt; peer chaincode instantiate -n mycc -v 0 -c 『{「Args」:[「a」,」10」]}』 -C myc</p>
+<p>所持金を20に変更してみる</p>
+<p>&gt; peer chaincode invoke -n mycc -c 『{「Args」:[「set」, 「a」, 「20」]}』 -C myc</p>
+<p>aの所持金をqueryコマンドで参照してみると</p>
+<p>&gt; peer chaincode query -n mycc -c 『{「Args」:[「query」,」a」]}』 -C myc</p>
+<p>20が戻り値として表示されていれば成功</p>
+<p>デフォルトでsaccしかマウントしないが、他のチェーンコードをchaincodeのサブディレクトリに追加すれば簡単にテストとネットワークを再構築可能</p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="前の章へ">Hyperledger Fabric実践入門</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2017, r-tominaga.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/purpose.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

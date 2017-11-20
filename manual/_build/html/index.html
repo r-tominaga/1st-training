@@ -1,0 +1,144 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Hyperledger Fabric実践入門 &#8212; Hyperledger Fabric Manual 1.0 ドキュメント</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="next" title="開発環境構築の手順" href="settings.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="settings.html" title="開発環境構築の手順"
+             accesskey="N">次へ</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Hyperledger Fabric Manual 1.0 ドキュメント</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="hyperledger-fabric">
+<h1>Hyperledger Fabric実践入門<a class="headerlink" href="#hyperledger-fabric" title="このヘッドラインへのパーマリンク">¶</a></h1>
+</div>
+<div class="section" id="id1">
+<h1>目次<a class="headerlink" href="#id1" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p><strong>はじめに</strong></p>
+<div class="line-block">
+<div class="line">本ドキュメントの目的は、HyperledgerFabricの使い方を学ぶことである</div>
+<div class="line">HyperledgerFabricを学ぶにあたり、アーキテクチャの理解が不可欠なので、前半はアーキテクチャの説明をする</div>
+<div class="line">その後、実際にyamlファイルを設定していくなかでHyperledgerFabricの操作法について学んでいく</div>
+<div class="line">本筋とは離れるが、Dockerに関する説明もあるのでコンテナ技術の理解に不安がある場合はそちらも併せて読むことを推奨する</div>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="settings.html">開発環境構築の手順</a></li>
+<li class="toctree-l1"><a class="reference internal" href="docker.html">Dockerについて</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="docker.html#id1">Dockerとは</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docker.html#id2">Docker用語集</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docker.html#id3">まとめ</a></li>
+<li class="toctree-l2"><a class="reference internal" href="docker.html#id4">参考サイト</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="architecture.html">Hyperledger Fabricアーキテクチャ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#id1">主要登場人物</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#id2">トランザクション・フロー</a></li>
+<li class="toctree-l2"><a class="reference internal" href="architecture.html#id3">参考</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="addPeer.html">ピア追加のおおまかな流れ</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="addPeer.html#id2">暗号生成について</a></li>
+<li class="toctree-l2"><a class="reference internal" href="addPeer.html#id3">設定ブロック生成</a></li>
+<li class="toctree-l2"><a class="reference internal" href="addPeer.html#docker">Dockerコンテナ起動</a></li>
+<li class="toctree-l2"><a class="reference internal" href="addPeer.html#id4">チャンネル作成・追加</a></li>
+<li class="toctree-l2"><a class="reference internal" href="addPeer.html#id5">チェーンコードのインストール・有効化</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sdk.html">SDKの使い方</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sdk.html#id1">前提条件</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sdk.html#anyenv">anyenv導入方法</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdk.html#node-js">Node.js導入方法</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sdk.html#node-js-sdk">Node.js SDKチュートリアル</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="sdk.html#query">台帳をqueryする</a></li>
+<li class="toctree-l3"><a class="reference internal" href="sdk.html#update">台帳をupdateする</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sdk.html#id2">本番SDKの使い方</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sdk.html#id4">チェーンコード</a></li>
+<li class="toctree-l1"><a class="reference internal" href="containerize.html">SDKのコンテナ化</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>次のトピックへ</h4>
+  <p class="topless"><a href="settings.html"
+                        title="次の章へ">開発環境構築の手順</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="settings.html" title="開発環境構築の手順"
+             >次へ</a> |</li>
+        <li class="nav-item nav-item-0"><a href="#">Hyperledger Fabric Manual 1.0 ドキュメント</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, r-tominaga.
+      このドキュメントは <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5 で生成しました。
+    </div>
+  </body>
+</html>

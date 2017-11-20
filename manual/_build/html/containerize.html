@@ -1,0 +1,185 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" lang="ja">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>SDKのコンテナ化 &#8212; Hyperledger Fabric Manual 1.0 ドキュメント</title>
+    <link rel="stylesheet" href="_static/classic.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <script type="text/javascript" src="_static/translations.js"></script>
+    <link rel="index" title="索引" href="genindex.html" />
+    <link rel="search" title="検索" href="search.html" />
+    <link rel="prev" title="SDKの使い方" href="sdk.html" /> 
+  </head>
+  <body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="総合索引"
+             accesskey="I">索引</a></li>
+        <li class="right" >
+          <a href="sdk.html" title="SDKの使い方"
+             accesskey="P">前へ</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Hyperledger Fabric Manual 1.0 ドキュメント</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="sdk">
+<h1>SDKのコンテナ化<a class="headerlink" href="#sdk" title="このヘッドラインへのパーマリンク">¶</a></h1>
+<p>SDKのコンテナ化について説明をする</p>
+<p>既にOrionのSDKは手元にある想定で話を進めていく</p>
+<div class="line-block">
+<div class="line">app.js eslintrc.json package.jsonがOrionWalletディレクトリ直下にある場合</div>
+<div class="line">libディレクトリに移動すること</div>
+<div class="line">理由は、OrionWalletまるごとコンテナにマウントしてしまうとnode_modulesが入ってしまい</div>
+<div class="line">上手く動作しないことが多々ある</div>
+<div class="line">なのでpackage.jsonを元にしてnpm installをコンテナ起動時にさせるためである</div>
+<div class="line">app.jsの移動に伴って一部パスを変更する必要がでてくる</div>
+</div>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">queryUser</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./queryUser&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">createUser</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./createUser&#39;</span><span class="p">);</span>
+<span class="kd">var</span> <span class="nx">queryAll</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./queryAll&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">addRaw</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./addRaw&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">sendTbc</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./sendTbc&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">changeAuth</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./changeAuth&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">changeMax</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./changeMax&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">queryMax</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./queryMax&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">queryLimit</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./queryLimit&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">initDist</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./initDist&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">modifyLimit</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./modifyLimit&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">install</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./install&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">upgrade</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./upgrade&#39;</span><span class="p">)</span>
+<span class="kd">var</span> <span class="nx">initializer</span> <span class="o">=</span> <span class="nx">require</span><span class="p">(</span><span class="s1">&#39;./initializer&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>requireするファイルのパスを上記のように変更する必要があるので注意</p>
+<p>次に現在使っているdocker-compose.yamlを編集する</p>
+<div class="highlight-yaml"><div class="highlight"><pre><span></span><span class="l l-Scalar l-Scalar-Plain">nodeapp</span><span class="p p-Indicator">:</span>
+  <span class="l l-Scalar l-Scalar-Plain">image</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">node:6.12.0</span>
+  <span class="l l-Scalar l-Scalar-Plain">ports</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="s">&#39;8000:8000&#39;</span>
+  <span class="l l-Scalar l-Scalar-Plain">tty</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">true</span>
+  <span class="l l-Scalar l-Scalar-Plain">volumes</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">../lib:/app/OrionWallet/lib</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">../creds:/app/OrionWallet/creds</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">$HOME/.hfc-key-store:/root/.hfc-key-store</span>
+  <span class="l l-Scalar l-Scalar-Plain">working_dir</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">/app/OrionWallet/lib</span>
+  <span class="l l-Scalar l-Scalar-Plain">command</span><span class="p p-Indicator">:</span> <span class="l l-Scalar l-Scalar-Plain">node app.js</span>
+  <span class="l l-Scalar l-Scalar-Plain">networks</span><span class="p p-Indicator">:</span>
+    <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">basic</span>
+  <span class="l l-Scalar l-Scalar-Plain">depends_on</span><span class="p p-Indicator">:</span>
+   <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">orderer.example.com</span>
+   <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">peer0.org1.example.com</span>
+   <span class="p p-Indicator">-</span> <span class="l l-Scalar l-Scalar-Plain">peer1.org1.example.com</span>
+</pre></div>
+</div>
+<p>docker-compose.yamlの最後に上記を付け加える</p>
+<p>SDKコンテナがHyperledgerのコンテナと接続できるようにするためにlib/にある.jsファイルを変更していく(7-16行目あたりにある)</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">queryAllObj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">run</span><span class="o">:</span> <span class="p">(</span><span class="nx">callback</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">wallet_path</span><span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;../creds&#39;</span><span class="p">),</span>
+      <span class="nx">user_id</span><span class="o">:</span> <span class="s1">&#39;PeerAdmin&#39;</span><span class="p">,</span>
+      <span class="nx">channel_id</span><span class="o">:</span> <span class="s1">&#39;mychannel&#39;</span><span class="p">,</span>
+      <span class="nx">chaincode_id</span><span class="o">:</span> <span class="s1">&#39;tbc&#39;</span><span class="p">,</span>
+      <span class="c1">//変更するのはnetwork_urlのlocalhost部分</span>
+      <span class="nx">network_url</span><span class="o">:</span> <span class="s1">&#39;grpc://peer0.org1.example.com:7051&#39;</span><span class="p">,</span>
+    <span class="p">};</span>
+</pre></div>
+</div>
+<p>query系のoptionは1つだが、台帳に変更を与えるようなファイルは3箇所変更する必要がある</p>
+<div class="highlight-js"><div class="highlight"><pre><span></span><span class="kd">var</span> <span class="nx">initDistObj</span> <span class="o">=</span> <span class="p">{</span>
+  <span class="nx">run</span><span class="o">:</span> <span class="p">(</span><span class="nx">params</span><span class="p">,</span> <span class="nx">callback</span><span class="p">)</span> <span class="p">=&gt;</span> <span class="p">{</span>
+    <span class="kd">var</span> <span class="nx">options</span> <span class="o">=</span> <span class="p">{</span>
+      <span class="nx">wallet_path</span><span class="o">:</span> <span class="nx">path</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="nx">__dirname</span><span class="p">,</span> <span class="s1">&#39;../creds&#39;</span><span class="p">),</span>
+      <span class="nx">user_id</span><span class="o">:</span> <span class="s1">&#39;PeerAdmin&#39;</span><span class="p">,</span>
+      <span class="nx">channel_id</span><span class="o">:</span> <span class="s1">&#39;mychannel&#39;</span><span class="p">,</span>
+      <span class="nx">chaincode_id</span><span class="o">:</span> <span class="s1">&#39;tbc&#39;</span><span class="p">,</span>
+      <span class="c1">//peer_url event_url orderer_urlの3つを変更する</span>
+      <span class="nx">peer_url</span><span class="o">:</span> <span class="s1">&#39;grpc://peer0.org1.example.com:7051&#39;</span><span class="p">,</span>
+      <span class="nx">event_url</span><span class="o">:</span> <span class="s1">&#39;grpc://peer0.org1.example.com:7053&#39;</span><span class="p">,</span>
+      <span class="nx">orderer_url</span><span class="o">:</span> <span class="s1">&#39;grpc://orderer.example.com:7050&#39;</span>
+    <span class="p">};</span>
+</pre></div>
+</div>
+<div class="line-block">
+<div class="line">該当箇所すべて書き換えれば完了</div>
+<div class="line">いつも通りstartFabric.shを実行する</div>
+</div>
+<div class="admonition note">
+<p class="first admonition-title">注釈</p>
+<div class="last line-block">
+<div class="line">まれにComposeでコンテナ起動時にコンテナがきちんとすべて起動していないためにチェンネル追加が失敗することがある</div>
+<div class="line">sleep時間が短すぎるために引き起こされていることがあるので</div>
+<div class="line">その場合は、start.shのexport FABRIC_START_TIMEOUT=50の数値を変更することで解決できる</div>
+</div>
+</div>
+<div class="line-block">
+<div class="line">docker-compose.yamlのコンテナひとつだけ起動したいときは</div>
+<div class="line">docker-compose up -d nodeapp</div>
+<div class="line">など引数にservice名(≠コンテナ名)を指定することで可能</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h4>前のトピックへ</h4>
+  <p class="topless"><a href="sdk.html"
+                        title="前の章へ">SDKの使い方</a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3>クイック検索</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="検索" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>ナビゲーション</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="総合索引"
+             >索引</a></li>
+        <li class="right" >
+          <a href="sdk.html" title="SDKの使い方"
+             >前へ</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">Hyperledger Fabric Manual 1.0 ドキュメント</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2017, r-tominaga.
+      このドキュメントは <a href="http://sphinx-doc.org/">Sphinx</a> 1.6.5 で生成しました。
+    </div>
+  </body>
+</html>
