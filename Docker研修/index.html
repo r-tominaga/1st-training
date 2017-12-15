@@ -54,11 +54,10 @@
 <font size="60px" color="#db7aad">Agenda</font>
 <br>
 1. ##### VMとコンテナの違い
-1. ##### Dockerの仕組み
+1. ##### Dockerとは
 1. ##### Dockerのセットアップ
 1. ##### Dockerの基本操作
-1. ##### MySQLコンテナを作成してみよう
-1. ##### Docker上でWebアプリケーション作成
+1. ##### DockerでWebアプリケーション作成
 1. ##### Dockerイメージ
 1. ##### tBCでの実例
 
@@ -169,6 +168,9 @@
 * カーネルを全てのコンテナで共有するため、カーネルに対する変更操作を個別に行うことができない
 
 ---
+## Dockerとは
+
+>>>
 ### Dockerとは
 
 Linux上でコンテナを管理・実行するためのプラットフォーム
@@ -190,6 +192,9 @@ Linux上でコンテナを管理・実行するためのプラットフォーム
 	* 独立したホストとほとんど同じように扱うことができる
 
 ---
+## Dockerのセットアップ
+
+>>>
 ### Dockerのセットアップ
 1. ### VMソフトウェアのインストール(VirtualBox+Vagrant)
 1. ### VMのセットアップ
@@ -204,6 +209,17 @@ Virtualbox(https://www.virtualbox.org/)
 Vagrant(https://www.vagrantup.com/)
 
 >>>
+### VirtualBoxとVagrant
+* <font color="007aad">VirtualBox</font>
+	* 正式名は、Oracle VM VirtualBox
+	* 仮想化ソフトウェア
+	* 現在Oracleが開発
+
+* <font color="007aad">Vagrant</font>
+	* 仮想化ソフトウェアのラッパー
+	* 構成情報を記述した設定ファイルを元に、仮想環境の構築から設定までを自動的に行える
+
+>>>
 ### VMのセットアップ
 Vagrantで使用するOSをダウンロード
 <br>
@@ -215,9 +231,11 @@ boxという形でOSが公開されている
 $ vagrant box add {自分でつけたbox名} {vagrantboxのURL}
 </code>
 </pre>
-<pre>
-<code class="shell">
-$ vagrant box add centos7 https://github.com/tommy-muehle/puppet-vagrant-boxes/releases/download/1.1.0/centos-7.0-x86_64.box
+
+<pre data-unlink="">
+<code>
+$ vagrant box add centos7 h ttps://github.com/tommy-muehle/puppet-vagrant-boxes/releases/download/1.1.0/centos-7.0-x86_64.box
+==> box: Successfully added box 'centos7' (v0) for 'virtualbox'!
 </code>
 </pre>
 <font color="#db7aad"><u>Virtualboxを使用しているので</u></font><br>
@@ -238,6 +256,11 @@ $ cd ~/works/vagrant/centos7
 <pre>
 <code class="shell">
 $ vagrant init centos7
+
+A `Vagrantfile` has been placed in this directory. You are now
+ready to `vagrant up` your first virtual environment! Please read
+the comments in the Vagrantfile as well as documentation on
+`vagrantup.com` for more information on using Vagrant.
 </code>
 </pre>
 
@@ -246,6 +269,12 @@ $ vagrant init centos7
 <pre>
 <code class="shell">
 $ vi Vagrantfile
+
+<中略>
+# Create a private network, which allows host-only access to the machine
+  # using a specific IP.
+  # config.vm.network "private_network", ip: "192.168.33.10"
+<中略>
 
 # コメントを外す
 config.vm.network "private_network", ip: "192.168.33.10"
@@ -272,6 +301,10 @@ config.vm.network "private_network", ip: "192.168.33.10"
 
 	# ログイン
 	$ vagrant ssh
+
+	Last login: Thu Jul 16 08:48:31 2015 from 10.0.2.2
+	Welcome to your Vagrant-built virtual machine.
+	[vagrant@localhost ~]$
 </code>
 </pre>
 
@@ -293,11 +326,11 @@ config.vm.network "private_network", ip: "192.168.33.10"
 </code>
 </pre>
 
----
+>>>
 ### Dockerのインストール
 <pre>
 <code class="shell">
-	$ yum -y install docker
+	$ sudo yum -y install docker
 </code>
 </pre>
 
@@ -305,13 +338,51 @@ config.vm.network "private_network", ip: "192.168.33.10"
 ### サービスの起動
 <pre>
 <code class="shell">
-	$ systemctl start docker
+	$ sudo systemctl start docker
 
-	$ systemctl enable docker
+	$ sudo systemctl enable docker
 </code>
 </pre>
 
+>>>
+## CentOSの言語設定がドイツ語になっていた場合
+
+>>>
+### 設定の確認
+<pre>
+<code class="shell">
+	$ localectl status
+	System Locale: LANG=en_US.utf8
+       VC Keymap: de
+      X11 Layout: de
+       X11 Model: pc105
+     X11 Options: terminate:ctrl_alt_bksp
+</code>
+</pre>
+
+>>>
+### System Localeの変更方法
+ログの出力をUTF-8にしたいのでja_JP.utf8に設定
+<pre>
+<code class="shell">
+	$ localectl set-locale LANG=ja_JP.utf8
+</code>
+</pre>
+
+>>>
+### VC Keymapの変更
+<pre>
+<code class="shell">
+	$ localectl set-keymap jp106
+</code>
+</pre>
+
+exitして再度ログインすれば設定が反映される
+
 ---
+## Dockerの基本操作
+
+>>>
 ### Docker基本操作
 イメージのダウンロード
 <pre>
@@ -359,6 +430,43 @@ config.vm.network "private_network", ip: "192.168.33.10"
 </pre>
 
 >>>
+## (番外編)sudoつけずにdockerコマンドを使う方法
+
+>>>
+1. ### docker groupを作成
+<pre>
+<code class="shell">
+	$ sudo groupadd docker
+</code>
+</pre>
+
+1. ### dockerを再起動
+<pre>
+<code class="shell">
+	$ sudo systemctl restart docker
+</code>
+</pre>
+<font size="5px">docker起動時にdocker groupが存在している場合、</font><br>
+<font size="5px">/var/run/docker.sockのgroupがdockerになります</font><br>
+<font size="5px">もし、なんらかの理由でdockerを再起動できない場合には、</font>
+<font size="5px">/var/run/docker.sockのgroupを直接変更してください</font>
+
+<pre>
+<code class="shell">
+	$ sudo chgrp docker /var/run/docker.sock
+</code>
+</pre>
+
+>>>
+### 3. sudoなしでdockerコマンドを実行させたいユーザを、docker groupに所属させる
+<pre>
+<code class="shell">
+	$ sudo gpasswd -a $USER docker
+</code>
+</pre>
+これで $USER が次回ログイン時には docker group に所属となり、sudo なしで docker コマンドが利用できるようになります
+
+>>>
 ### docker runの主なオプション
 
 | オプション | 機能 |
@@ -382,10 +490,10 @@ config.vm.network "private_network", ip: "192.168.33.10"
 <pre>
 <code class="shell">
 	# イメージの取得
-	$ docker pull ubuntu
+	$ docker pull mysql
 
 	# コンテナの実行
-	$ docker run --rm -it -h c1sv ubuntu /bin/bash
+	$ docker run --rm -it -e MySQL_ROOT_PASSWORD=root mysql /bin/bash
 
 	# 稼働中のコンテナのIDを確認
 	$ docker ps
@@ -393,7 +501,29 @@ config.vm.network "private_network", ip: "192.168.33.10"
 </pre>
 
 >>>
-### Docker上でWebアプリケーションを作成
+### バージョン違いのMySQLコンテナを用意する
+https://hub.docker.com/_/mysql/
+<pre>
+<code class="shell">
+	# イメージの取得
+	$ docker pull mysql:latest
+	$ docker pull mysql:8.0
+	$ docker images
+
+	# コンテナの実行
+	$ docker run -it --name mysql -e MySQL_ROOT_PASSWORD=root mysql:latest /bin/bash
+	$ docker run -it --name mysql8 -e MySQL_ROOT_PASSWORD=root mysql:8.0 /bin/bash
+
+	# 稼働中のコンテナのIDを確認
+	$ docker ps
+</code>
+</pre>
+
+---
+## DockerでWebアプリケーション作成
+
+>>>
+### DockerでWebアプリケーション作成
 <pre>
 <code class="shell">
 	# 一体型のコンテナでWordpressを実行
@@ -414,6 +544,9 @@ config.vm.network "private_network", ip: "192.168.33.10"
 </code>
 </pre>
 
+---
+## Dockerイメージ
+
 >>>
 ### Dockerイメージの作成
 ### 手順
@@ -428,8 +561,8 @@ config.vm.network "private_network", ip: "192.168.33.10"
 	FROM centos
 
 	RUN yum -y install httpd
-	RUN yum clean all
-
+	RUN yum clean all # yum のキャッシュを削除
+	# 文字の置換iでインサート、eで条件
 	RUN sed -i -e ¥
 	"s¥#ServerNamewww¥.example¥.com:80¥ServerName www.example.com:80/" ¥
 	/etc/httpd/conf/httpd.conf
@@ -437,6 +570,7 @@ config.vm.network "private_network", ip: "192.168.33.10"
 	ADD ./html/ /var/www/html/
 
 	EXPOSE 80
+	# Apacheをフォアグラウンドで動かす
 	CMD ["/usr/sbin/httpd", "-D", "FOREGROUND"]
 </code>
 </pre>
@@ -475,7 +609,8 @@ config.vm.network "private_network", ip: "192.168.33.10"
 </code>
 </pre>
 
-
+---
+## tBCでの実例
 
 
 
