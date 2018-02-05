@@ -1,0 +1,25 @@
+■ ライブラリを手に入れる２
+
+node -v
+
+xcode-select --install
+
+■ ライブラリを手に入れる３
+
+mkdir bccc
+cd bccc
+
+npm init --y
+
+■ ライブラリを手に入れる４
+
+npm install -g browserify
+
+npm install -g uglify-js
+
+■ ライブラリを手に入れる５
+
+npm install bitcore-lib
+
+browserify --require ./node_modules/bitcore-lib/index.js:bitcore-lib | uglifyjs > ./bitcore-lib.min.js
+
