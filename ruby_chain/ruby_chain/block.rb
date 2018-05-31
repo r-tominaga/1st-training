@@ -3,6 +3,8 @@ require 'time'
 
 require_relative 'transaction'
 require_relative 'proof_of_work'
+require_relative '../main'
+
 
 class Block
   attr_reader :hash, :height, :transactions, :timestamp, :nonce, :previous_hash
@@ -33,8 +35,7 @@ class Block
       address = "62e907b15cbf27d5425399ebf6f0fb50ebb88f18"
       timestamp = Time.parse("2009/1/3").to_i
       previous_hash = '0'
-      genesis_coinbase_data = "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
-      transactions = [genesis_coinbase_data]
+      transactions = {from: "SATOSHI NAKAMOTO", to: $init_data[:to], amount: $init_data[:amount], comment: "Initialize Distribution"}
 
       pow = ProofOfWork.new(
         timestamp: timestamp,

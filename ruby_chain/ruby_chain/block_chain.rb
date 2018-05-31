@@ -19,10 +19,10 @@ class BlockChain
   end
 
   # 新しいブロックを作る
-  def next_block transactions
-    height = last_block.height + 1
+  def next_block transactions, prev_block
+    height = prev_block.height + 1
     timestamp = Time.now.to_i
-    previous_hash = last_block.hash
+    previous_hash = prev_block.hash
     # TODO: transactions → merkle_root
     pow = ProofOfWork.new(
       timestamp: timestamp,

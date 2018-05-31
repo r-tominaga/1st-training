@@ -7,7 +7,7 @@ class Miner
   def initialize args
     @name = args[:name]
     @rsa = OpenSSL::PKey::RSA.generate(2048)
-    @block_chain = BlockChain.new
+    @block_chain = args[:block_chain]
   end
 
   def accept receive_block_chain
@@ -22,9 +22,10 @@ class Miner
     end
   end
 
-  def add_new_block tx_data
-    next_block = @block_chain.next_block [tx_data]
+  def add_new_block tx_data, prev_block
+    next_block = @block_chain.next_block tx_data, prev_block
     @block_chain.add_block(next_block)
     puts "#{@name} add new block: #{next_block.hash}"
+    @blockchain
   end
 end
