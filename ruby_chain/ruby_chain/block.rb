@@ -36,7 +36,6 @@ class Block
       timestamp = Time.parse("2009/1/3").to_i
       previous_hash = '0'
       transactions = {from: "SATOSHI NAKAMOTO", to: $init_data[:to], amount: $init_data[:amount], comment: "Initialize Distribution"}
-
       pow = ProofOfWork.new(
         timestamp: timestamp,
         previous_hash: previous_hash,

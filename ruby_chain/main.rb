@@ -2,25 +2,66 @@ require_relative 'ruby_chain/block_chain'
 require_relative 'ruby_chain/miner'
 require 'json'
 require 'sinatra'
+require 'pstore'
 
+$init_flg = false
+$init_data = {to: "", amount:0}
 $receive_block_chain
-$init_data
+
+$db = PStore.new('./transactions/history')
+
+# もしDBにデータがあれば$init_flgをtrueに変えて、$receive_block_chainに取得したブロックチェーン情報をセット
+# 本当は実行時にチェックしたいが$receive_block_chainが初期化されていないのでエラーがでるので再開時に'/restartしてもらう'
+get '/restart' do
+  $db.transaction(true) do
+    if $db.root?('root')
+      $init_flg = true
+      $receive_block_chain = BlockChain.new
+      $db['root'].each {|key, value|
+        $receive_block_chain.blocks[key] = Block.new(
+              hash: value['hash'],
+              height: key,
+              transactions: value['transactions'],
+              timestamp: value['timestamp'],
+              nonce: value['nonce'],
+              previous_hash: value['previous_hash']
+        )
+      }
+    end
+  end
+end
+
+def checkDatabase
+  $db.transaction(true) do
+    if $db.root?('root')
+      $init_flg = true
+      $receive_block_chain = BlockChain.new
+      $db['root'].each {|key, value|
+        $receive_block_chain.blocks[key] = Block.new(
+              hash: value['hash'],
+              height: key,
+              transactions: value['transactions'],
+              timestamp: value['timestamp'],
+              nonce: value['nonce'],
+              previous_hash: value['previous_hash']
+        )
+      }
+    end
+  end
+end
 
 ## blockchain simulator
 post '/initDist' do
-  $init_data = params
-  $receive_block_chain = BlockChain.new
-  block = $receive_block_chain.last_block
-  data = {block.height => {
-    'hash' => block.hash,
-    'previous_hash' => block.previous_hash,
-    'timestamp' => block.timestamp,
-    'transactions' => block.transactions,
-    'nonce'=> block.nonce
-  }}
-  file = File.open('./transactions/genesis.json','w')
-  file.puts JSON.pretty_generate(data)
-  file.close
+  if $init_flg == false
+    $init_data = params
+    $receive_block_chain = BlockChain.new
+    block = $receive_block_chain.last_block
+    $db.transaction do
+      $db['root'] = $receive_block_chain
+      p $db['root']
+    end
+    $init_flg = true
+    end
 end
 
 get '/chain_info' do
@@ -34,7 +75,6 @@ get '/queryAll' do
   end
   "#{tx}"
 end
-
 
 post '/send' do
   args = {name: "miner1", block_chain: $receive_block_chain}
@@ -62,36 +102,14 @@ def queryAmount user_name
   receiving - sending
 end
 
-# ここをトリガーで発動させる
 def create_miner args, params
   miner = Miner.new args
   miner.accept $receive_block_chain
   tx_data = {from: params[:from], to: params[:to], amount: params[:amount], comment: params[:comment]}
   miner.add_new_block tx_data , $receive_block_chain.last_block
-
-  block = $receive_block_chain.last_block
-  if block.height == 0
-    data = {block.height => {
-      'hash' => block.hash,
-      'previous_hash' => block.previous_hash,
-      'timestamp' => block.timestamp,
-      'transactions' => block.transactions,
-      'nonce'=> block.nonce
-    }}
-    file = File.open('./transactions/genesis.json','w')
-    file.puts JSON.pretty_generate(data)
-    file.close
-  else
-    file = File.open("./transactions/#{block.timestamp}.json",'w')
-    data = {block.height => {
-      'hash' => block.hash,
-      'previous_hash' => block.previous_hash,
-      'timestamp' => block.timestamp,
-      'transactions' => block.transactions,
-      'nonce'=> block.nonce
-    }}
-    file.puts JSON.pretty_generate(data)
-    file.close  
+  $db.transaction do
+    $db['root'] = $receive_block_chain
+    p $db['root']
   end
   broadcast miner
 end
