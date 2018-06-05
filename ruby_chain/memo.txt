@@ -15,3 +15,17 @@ genesisブロック作成時に初期発行
 
 senderとreceiverが同一ならエラー
 pstore
+
+欲しい機能
+・せびる
+・履歴をブロックチェーンっぽく表示する
+
+SendController
+HistoryController
+InitContorller
+UserController
+SessionController
+LoginController
+
+:::DB設計:::
+User

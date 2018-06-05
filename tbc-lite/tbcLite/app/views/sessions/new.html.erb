@@ -1,0 +1,18 @@
+<h1>Login</h1>
+
+<%= form_for(:user, url: '/login') do |form| %>
+  <div class="field">
+    <%= form.label :email %>
+    <%= form.text_field :email, id: :user_email %>
+  </div>
+
+  <div class="field">
+    <%= form.label :password_digest %>
+    <%= form.text_field :password_digest, id: :user_password_digest %>
+  </div>
+
+  <div class="actions">
+    <%= form.submit(["Login"]) %>
+  </div>
+<% end %>
+

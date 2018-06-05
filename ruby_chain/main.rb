@@ -16,17 +16,7 @@ get '/restart' do
   $db.transaction(true) do
     if $db.root?('root')
       $init_flg = true
-      $receive_block_chain = BlockChain.new
-      $db['root'].each {|key, value|
-        $receive_block_chain.blocks[key] = Block.new(
-              hash: value['hash'],
-              height: key,
-              transactions: value['transactions'],
-              timestamp: value['timestamp'],
-              nonce: value['nonce'],
-              previous_hash: value['previous_hash']
-        )
-      }
+      $receive_block_chain = $db['root']
     end
   end
 end
@@ -64,6 +54,8 @@ post '/initDist' do
     end
 end
 
+# 最新のブロック情報を出す
+# 使いみちあるか？
 get '/chain_info' do
   "#{$receive_block_chain.last_block.height} \n#{$receive_block_chain.last_block.hash} \n#{$receive_block_chain.last_block.previous_hash}"
 end
@@ -73,7 +65,7 @@ get '/queryAll' do
   $receive_block_chain.blocks.each do |block|
     tx << block.transactions
   end
-  "#{tx}"
+  JSON.generate({"Blocks" => tx})
 end
 
 post '/send' do
@@ -86,7 +78,7 @@ post '/send' do
 end
 
 post '/queryUser' do
-  "#{queryAmount(params[:user_name])}"
+  JSON.generate({"amount" => queryAmount(params[:user_name])})
 end
 
 def queryAmount user_name
@@ -118,23 +110,3 @@ def broadcast miner
   puts "#{miner.name} broadcasted"
   $receive_block_chain = miner.block_chain
 end
-
-  # puts "start"
-  # th1 = create_miner name: "miner1"
-  # th2 = create_miner name: "miner2"
-  # th3 = create_miner name: "miner3"
-  # [th1, th2, th3].each{|t| t.join}
-
-  # puts "block chain result"
-
-  # $receive_block_chain.blocks.each do |block|
-  #   puts "*** Block #{block.height} ***"
-  #   puts "hash: #{block.hash}"
-  #   puts "previous_hash: #{block.previous_hash}"
-  #   puts "timestamp: #{block.timestamp}"
-  #   # TODO: merkle root
-  #   # puts "transactions_hash: #{block.transactions_hash}"
-  #   puts "transactions: #{block.transactions}"
-  #   puts "nonce: #{block.nonce}"
-  #   puts ""
-  # end

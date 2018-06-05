@@ -1,0 +1,19 @@
+<h1>Send Token</h1>
+<div>
+  <%= @current_user %>
+  Your Possession:<%= @amount['amount'] %> tBC
+</div>
+<%= form_tag('/sendToken', method: :post) do %>
+  <%# ここはリスト表示 %>
+  <label for="target">To</label>
+  <%= text_field_tag :target, '', size: 30 %>
+  <label for="amount">Amount</label>
+  <%= number_field_tag :amount, '', size: 30 %>
+  <label for="comment">Comment</label>
+  <%= text_field_tag :comment, '', size: 30 %>
+  <br>
+  <%= submit_tag 'Transfer' %>
+
+<% end %>
+
+<%= link_to 'Back', users_path %>
