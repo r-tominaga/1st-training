@@ -20,6 +20,8 @@ pstore
 ・せびる
 ・履歴をブロックチェーンっぽく表示する
 
+エラーハンドリングをもっとしっかり
+
 SendController
 HistoryController
 InitContorller

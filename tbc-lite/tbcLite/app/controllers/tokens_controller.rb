@@ -3,25 +3,30 @@ require 'uri'
 require 'json'
 
 class TokensController < ApplicationController
+  add_flash_types :success, :info, :warning, :danger
   include SessionsHelper
-  before_action :require_login
+  before_action :require_login, :current_user_wallet
 
-  def index
-    uri = URI.parse('http://localhost:4567/queryUser')
+  def showInitDist
+    render 'initDist'
+  end
 
+  def initDist
+    # 下でも呼んでるからprivate関数にまとめたほうが良い
+    uri = URI.parse('http://localhost:4567/initDist')
     http = Net::HTTP.new(uri.host, uri.port)
-
-    # 別に今回はSSL通信する必要ないかな？
-    # http.use_ssl = true
-    # http.verify_mode = OpenSSL::SSL::VERIFY_NONE
-
     req = Net::HTTP::Post.new(uri.path)
-    # current_userから取ってくること
-    req.set_form_data({'user_name' => 'hamano'})
+    req.set_form_data({'to' => params[:target], 'amount' => params[:amount]})
+    res = ActiveSupport::JSON.decode(http.request(req).body)
+    if res['status']
+      redirect_to '/initDist', success: 'Success'
+      return
+    end
+    redirect_to '/initDist', danger: res['msg']
+    return
+  end
 
-    res = http.request(req)
-    @amount = ActiveSupport::JSON.decode(res.body)
-    current_user
+  def indexSendToken
     render 'sendToken'
   end
 
@@ -29,11 +34,15 @@ class TokensController < ApplicationController
     uri = URI.parse('http://localhost:4567/send')
     http = Net::HTTP.new(uri.host, uri.port)
     req = Net::HTTP::Post.new(uri.path)
-    # current_userから取ってくること
-    req.set_form_data({'from' => 'hamano', 'to' => params[:target], 'amount' => params[:amount], 'comment' => params[:comment]})
-    http.request(req)
-
-    redirect_to action: 'index'
+    current_user
+    req.set_form_data({'from' => @current_user.user_name, 'to' => params[:target], 'amount' => params[:amount], 'comment' => params[:comment]})
+    res = ActiveSupport::JSON.decode(http.request(req).body)
+    if res['status']
+      redirect_to '/sendToken', success: 'Success'
+      return
+    end
+    redirect_to '/sendToken', danger: res['msg']
+    return
   end
 
   def queryAll

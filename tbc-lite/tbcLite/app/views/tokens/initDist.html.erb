@@ -1,4 +1,4 @@
-<h1>Send Token</h1>
+<h1>Initialize BlockChain</h1>
 <%= csrf_meta_tags %>
 <% flash.each do |name, msg| %>
   <div class="alert alert-<%= name %>">
@@ -6,19 +6,15 @@
     <%= msg %>
   </div>
 <% end %>
-<div>
-  <%= @current_user.user_name %>'s Possession:<%= @amount %> tBC
-</div>
-<%= form_tag('/sendToken', method: :post) do %>
+<%= form_tag('/initDist', method: :post) do %>
   <%# ここはリスト表示 %>
-  <label for="target">To</label>
+  <label for="target">First Possessor</label>
   <%= text_field_tag :target, '', size: 30 %>
   <label for="amount">Amount</label>
-  <%= number_field_tag :amount, '', size: 10 %>
-  <label for="comment">Comment</label>
-  <%= text_field_tag :comment, '', size: 30 %>
+  <%= number_field_tag :amount, '', size: 30 %>
   <br>
-  <%= submit_tag 'Transfer' %>
+  <%= submit_tag 'Initialize' %>
+
 <% end %>
 
 <%= link_to 'Back', users_path %>
