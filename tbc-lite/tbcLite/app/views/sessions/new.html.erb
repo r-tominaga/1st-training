@@ -1,18 +1,40 @@
-<h1>Login</h1>
+<!DOCTYPE html>
+<!-- UIkit CSS -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.5/css/uikit.min.css" />
 
-<%= form_for(:user, url: '/login') do |form| %>
-  <div class="field">
-    <%= form.label :email %>
-    <%= form.text_field :email, id: :user_email %>
-  </div>
+<!-- UIkit JS -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.5/js/uikit.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/uikit/3.0.0-rc.5/js/uikit-icons.min.js"></script>
+<html>
+  <head>
+    <title>tBCLite</title>
+    <%= csrf_meta_tags %>
+    <div class="uk-margin-left">
+      <h1 class="uk-heading-primary ">tBCLite</h1>
+    </div>
+  </head>
+  <body>
+    <div class="uk-card uk-card-small uk-card-default uk-card-body">
+        <h3 class="uk-card-title">LOGIN</h3>
+          <%= form_for(:user, url: '/login') do |form| %>
+              <div class="uk-margin">
+                  <div class="uk-inline">
+                      <span class="uk-form-icon" uk-icon="icon: user"></span>
+                      <input class="uk-input" id="user_email" name="user[email]" type="text">
+                  </div>
+              </div>
 
-  <div class="field">
-    <%= form.label :password_digest %>
-    <%= form.text_field :password_digest, id: :user_password_digest %>
-  </div>
-
-  <div class="actions">
-    <%= form.submit(["Login"]) %>
-  </div>
-<% end %>
-
+              <div class="uk-margin">
+                  <div class="uk-inline">
+                      <span class="uk-form-icon uk-form-icon-flip" uk-icon="icon: lock"></span>
+                      <input class="uk-input" id="user_password_digest" name="user[password_digest]" type="password">
+                  </div>
+              </div>
+              <div class="actions">
+                <%= form.submit "Login", :class => "uk-button uk-button-primary" %>
+              </div>
+          <% end %>
+          <%= link_to 'New User', new_user_path, :class => "uk-button uk-button-primary" %>
+    </div>
+  </body>
+</html>

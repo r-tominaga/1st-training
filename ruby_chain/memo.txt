@@ -31,3 +31,9 @@ LoginController
 
 :::DB設計:::
 User
+
+
+インターフェース
+クラス図
+シナトラは中抜き
+initDistだけ見せる

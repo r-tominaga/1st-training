@@ -98,9 +98,16 @@ end
 
 get '/queryAll' do
   return JSON.generate({"status" => false, "msg" => "BlockChain doesn't exist"}) unless is_blockchain_exist?
-  tx = []
+  tx = {}
   $receive_block_chain.blocks.each do |block|
-    tx << block.transactions
+    tx[block.height] = {
+      "hash": block.hash,
+      "height": block.height,
+      "transactions": block.transactions,
+      "timestamp": block.timestamp,
+      "nonce": block.nonce,
+      "previous_hash": block.previous_hash
+    }
   end
   JSON.generate({"status" => true, "msg" => tx})
 end

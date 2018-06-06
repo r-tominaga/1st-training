@@ -21,7 +21,7 @@ class ProofOfWork
   end
 
   # TODO: difficulty
-  def do_proof_of_work(difficulty = '0000')
+  def do_proof_of_work(difficulty = '00000')
     nonce = 0
 
     loop do

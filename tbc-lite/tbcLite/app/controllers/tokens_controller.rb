@@ -1,9 +1,9 @@
 require 'net/http'
 require 'uri'
 require 'json'
+require 'digest/sha2'
 
 class TokensController < ApplicationController
-  add_flash_types :success, :info, :warning, :danger
   include SessionsHelper
   before_action :require_login, :current_user_wallet
 
@@ -17,13 +17,8 @@ class TokensController < ApplicationController
     http = Net::HTTP.new(uri.host, uri.port)
     req = Net::HTTP::Post.new(uri.path)
     req.set_form_data({'to' => params[:target], 'amount' => params[:amount]})
-    res = ActiveSupport::JSON.decode(http.request(req).body)
-    if res['status']
-      redirect_to '/initDist', success: 'Success'
-      return
-    end
-    redirect_to '/initDist', danger: res['msg']
-    return
+    @res = ActiveSupport::JSON.decode(http.request(req).body)
+    render 'initDist'
   end
 
   def indexSendToken
@@ -35,7 +30,8 @@ class TokensController < ApplicationController
     http = Net::HTTP.new(uri.host, uri.port)
     req = Net::HTTP::Post.new(uri.path)
     current_user
-    req.set_form_data({'from' => @current_user.user_name, 'to' => params[:target], 'amount' => params[:amount], 'comment' => params[:comment]})
+    # idで送らないとユーザー名を変えられるとアカウントの残高が引き継げない
+    req.set_form_data({'from' => @current_user.user_name, 'to' => params[:user][:user_name], 'amount' => params[:amount], 'comment' => params[:comment]})
     res = ActiveSupport::JSON.decode(http.request(req).body)
     if res['status']
       redirect_to '/sendToken', success: 'Success'
@@ -48,8 +44,23 @@ class TokensController < ApplicationController
   def queryAll
     uri = URI.parse('http://localhost:4567/queryAll')
     json = Net::HTTP.get(uri)
-    @result = JSON.parse(json)
+    result = JSON.parse(json)
+    @blocks = result["msg"]
+    @sha = calc_hash_with_nonce @blocks
     render 'queryAll'
+  end
+
+  def calc_hash_with_nonce(blocks)
+    sha = []
+    blocks.each do |key, value|
+      sha << Digest::SHA256.hexdigest({
+        timestamp: value["timestamp"],
+        transactions: value["transactions"],
+        previous_hash: value["previous_hash"],
+        nonce: value["nonce"]
+      }.to_json)
+    end
+    sha
   end
 
   private

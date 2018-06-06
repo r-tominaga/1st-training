@@ -3,8 +3,8 @@ require 'uri'
 require 'json'
 
 class UsersController < ApplicationController
+  before_action :require_login, :current_user_wallet, only: [:show, :edit, :update, :destroy, :index]
   before_action :set_user, only: [:show, :edit, :update, :destroy]
-
   # GET /users
   # GET /users.json
   def index
@@ -74,4 +74,9 @@ class UsersController < ApplicationController
     def user_params
       params.require(:user).permit(:user_name, :email, :password, :password_confirmation)
     end
+
+    def require_login
+      redirect_to '/login' unless logged_in?
+    end
+
 end

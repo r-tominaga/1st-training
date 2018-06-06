@@ -1,7 +1,26 @@
-<p>
-  <strong>All Blocks:</strong>
-</p>
-
+<h1 class="uk-card-title uk-margin-left">All Blocks</h1>
 <div>
-  <%= @result %>
+  <% @blocks.each do |key,value| %>
+    <div class="uk-card uk-card-default uk-card-body uk-width-1-2@m">
+      <h3 class="uk-card-title">BLOCK No.<%= key %></h3>
+      <p>Hash: <%= value["hash"] %></p>
+      <p>Transaction:</p>
+      <div class="uk-margin-left">
+        <p><%= value["transactions"]["from"] %> => <%= value["transactions"]["to"] %></p>
+        <p><%= value["transactions"]["amount"] %> tBC</p>
+        <p>Comment:"<%= value["transactions"]["comment"] %>"</p>
+      </div>
+      <p>Timestamp: <%= value["timestamp"] %></p>
+      <p>Nonce: <%= value["nonce"] %></p>
+      <p>Previous Hash: <%= value["previous_hash"] %></p>
+      <p>Calculated Hash: <%= @sha[key.to_i] %> </p>
+      <% if @sha[key.to_i] != value["hash"] %>
+        <div class="uk-alert-danger" uk-alert>
+          <a class="uk-alert-close" uk-close></a>
+          <p>Inavalid Hash!!!</p>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
 </div>
+
