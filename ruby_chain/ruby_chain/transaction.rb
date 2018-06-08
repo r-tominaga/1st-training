@@ -26,6 +26,7 @@ class Transaction
     # tx_id = nil or "" ?
       tx_id: nil,
       v_out: -1,
+      # script_sigなのにdataを送っているのはナゼ？
       script_sig: data
     )]
 

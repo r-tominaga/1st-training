@@ -1,6 +1,5 @@
-<h1>Editing User</h1>
-
-<%= render 'form', user: @user %>
-
-<%= link_to 'Show', @user %> |
-<%= link_to 'Back', users_path %>
+<div class="uk-margin-left">
+  <h1>Editing User</h1>
+  <%= render 'form', user: @user %>
+</div>
+<%= link_to 'Back', users_path, class: "uk-button uk-button-primary uk-margin-left uk-margin-top" %>

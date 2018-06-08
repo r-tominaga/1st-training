@@ -24,7 +24,7 @@
   <div class="uk-inline">
     <%= form_tag('/initDist', method: :post) do %>
       <label for="target">First Possessor</label>
-      <%= collection_select(:user, :user_name, User.where.not(user_name: @current_user.user_name), :user_name, :user_name, {}, {class: "uk-select uk-margin-bottom"}) %>
+      <%= collection_select(:user, :user_name, User.all, :user_name, :user_name, {}, {class: "uk-select uk-margin-bottom"}) %>
       <label for="amount">Amount</label>
       <%= number_field_tag :amount, '', size: 30, class: "uk-input uk-margin-bottom" %>
       <br>

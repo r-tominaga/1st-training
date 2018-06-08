@@ -16,7 +16,7 @@ class TokensController < ApplicationController
     uri = URI.parse('http://localhost:4567/initDist')
     http = Net::HTTP.new(uri.host, uri.port)
     req = Net::HTTP::Post.new(uri.path)
-    req.set_form_data({'to' => params[:target], 'amount' => params[:amount]})
+    req.set_form_data({'to' => params[:user][:user_name], 'amount' => params[:amount]})
     @res = ActiveSupport::JSON.decode(http.request(req).body)
     render 'initDist'
   end
@@ -52,13 +52,15 @@ class TokensController < ApplicationController
 
   def calc_hash_with_nonce(blocks)
     sha = []
-    blocks.each do |key, value|
-      sha << Digest::SHA256.hexdigest({
-        timestamp: value["timestamp"],
-        transactions: value["transactions"],
-        previous_hash: value["previous_hash"],
-        nonce: value["nonce"]
-      }.to_json)
+    unless @blocks == "Blockchain doesn't exist"
+      blocks.each do |key, value|
+        sha << Digest::SHA256.hexdigest({
+          timestamp: value["timestamp"],
+          transactions: value["transactions"],
+          previous_hash: value["previous_hash"],
+          nonce: value["nonce"]
+        }.to_json)
+      end
     end
     sha
   end
