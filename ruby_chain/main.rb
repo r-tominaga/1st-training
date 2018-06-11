@@ -4,49 +4,25 @@ require 'json'
 require 'sinatra'
 require 'pstore'
 
+# ブロックチェーンが動いているかどうか
 $init_flg = false
+# initDist時のパラメータ雛形
 $init_data = {to: "", amount:0}
+# 現在使用しているブロックチェーン
 $receive_block_chain
 
 $db = PStore.new('./transactions/history')
 
+# データベースが存在するかチェック
+# あれば$init_flgをtrueにして、$receive_block_chainにセット
 def checkDatabase
-  $db.transaction(true) do
-    if $db.root?('root')
-      $init_flg = true
-      $receive_block_chain = BlockChain.new
-      $db['root'].each {|key, value|
-        $receive_block_chain.blocks[key] = Block.new(
-              hash: value['hash'],
-              height: key,
-              transactions: value['transactions'],
-              timestamp: value['timestamp'],
-              nonce: value['nonce'],
-              previous_hash: value['previous_hash']
-        )
-      }
-    end
-  end
 end
 
 def is_blockchain_exist?
-  if $receive_block_chain.nil? || $receive_block_chain.blocks.nil?
-    return false
-  end
-  true
 end
 
+# 指定ユーザーの残高を計算
 def queryAmount user_name
-  sending = 0
-  receiving = 0
-  $receive_block_chain.blocks.each do |block|
-    if block.transactions[:from] == user_name
-      sending += block.transactions[:amount].to_i
-    elsif block.transactions[:to] == user_name
-      receiving += block.transactions[:amount].to_i
-    end
-  end
-  receiving - sending
 end
 
 def create_miner args, params
@@ -67,19 +43,12 @@ def broadcast miner
 end
 
 # もしDBにデータがあれば$init_flgをtrueに変えて、$receive_block_chainに取得したブロックチェーン情報をセット
-# 本当は実行時にチェックしたいが$receive_block_chainが初期化されていないのでエラーがでるので再開時に'/restartしてもらう'
+# 本当は実行時にチェックしたいが$receive_block_chainが初期化されていないためエラーがでる
+# なので再開時に'/restartしてもらう'
 get '/restart' do
-  $db.transaction(true) do
-    if $db.root?('root')
-      $init_flg = true
-      $receive_block_chain = $db['root']
-      return JSON.generate({"status" => true, "msg" => "Success"})
-    else
-      return JSON.generate({"status" => false, "msg" => "Database doesn't exist"})
-    end
-  end
 end
 
+# 初期配布(=ブロックチェーンを開始)
 post '/initDist' do
   if $init_flg == false && params[:to] != "" && !params[:to].nil?
     $init_data = params
@@ -97,36 +66,10 @@ post '/initDist' do
 end
 
 get '/queryAll' do
-  return JSON.generate({"status" => false, "msg" => "Blockchain doesn't exist"}) unless is_blockchain_exist?
-  tx = {}
-  $receive_block_chain.blocks.each do |block|
-    tx[block.height] = {
-      "hash": block.hash,
-      "height": block.height,
-      "transactions": block.transactions,
-      "timestamp": block.timestamp,
-      "nonce": block.nonce,
-      "previous_hash": block.previous_hash
-    }
-  end
-  JSON.generate({"status" => true, "msg" => tx})
 end
 
 post '/send' do
-  return JSON.generate({"status" => false, "msg" => "Blockchain doesn't exist"}) unless is_blockchain_exist?
-  return JSON.generate({"status" => false, "msg" => "You do not steal other's property"}) if params[:amount].to_i < 0
-  return JSON.generate({"status" => false, "msg" => "You can't send yourself"}) if params[:from] == params[:to]
-  return JSON.generate({"status" => false, "msg" => "You can't send yourself"}) if params[:from] == "" || params[:to] == ""
-  args = {block_chain: $receive_block_chain}
-  if (queryAmount(params[:from]).to_i - params[:amount].to_i) < 0
-    return JSON.generate({"status" => false, "msg" => "There is not enough money"})
-  else
-    create_miner args, params
-    return JSON.generate({"status" => true, "msg" => 'Success'})
-  end
 end
 
 post '/queryUser' do
-  return JSON.generate({"status" => false, "msg" => "Blockchain doesn't exist"}) unless is_blockchain_exist?
-  JSON.generate({"status" => true, "msg" => queryAmount(params[:user_name])})
 end
