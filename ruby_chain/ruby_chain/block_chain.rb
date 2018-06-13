@@ -6,11 +6,11 @@ require_relative 'block'
 class BlockChain
   attr_reader :blocks
 
-  def initialize
+  def initialize(init_data={})
     # ブロックチェーンを納めるための最初の空のリスト
     @blocks = []
     # ジェネシス・ブロックをブロックチェーンの最初に追加する
-    @blocks << BlockChain.get_genesis_block()
+    @blocks << BlockChain.get_genesis_block(init_data)
   end
 
   # ブロックチェーンの最後のブロックを返す
@@ -92,8 +92,8 @@ class BlockChain
       end
     end
 
-    def get_genesis_block
-      Block.create_genesis_block
+    def get_genesis_block init_data
+      Block.create_genesis_block init_data
     end
   end
 

@@ -5,34 +5,11 @@ require 'sinatra'
 require 'pstore'
 
 $init_flg = false
-$init_data = {to: "", amount:0}
 $receive_block_chain
-
 $db = PStore.new('./transactions/history')
 
-def checkDatabase
-  $db.transaction(true) do
-    if $db.root?('root')
-      $init_flg = true
-      $receive_block_chain = BlockChain.new
-      $db['root'].each {|key, value|
-        $receive_block_chain.blocks[key] = Block.new(
-              hash: value['hash'],
-              height: key,
-              transactions: value['transactions'],
-              timestamp: value['timestamp'],
-              nonce: value['nonce'],
-              previous_hash: value['previous_hash']
-        )
-      }
-    end
-  end
-end
-
 def is_blockchain_exist?
-  if $receive_block_chain.nil? || $receive_block_chain.blocks.nil?
-    return false
-  end
+  return false if $receive_block_chain.nil? || $receive_block_chain.blocks.nil?
   true
 end
 
@@ -62,7 +39,6 @@ def create_miner args, params
 end
 
 def broadcast miner
-  puts "#{miner.name} broadcasted"
   $receive_block_chain = miner.block_chain
 end
 
@@ -82,12 +58,9 @@ end
 
 post '/initDist' do
   if $init_flg == false && params[:to] != "" && !params[:to].nil?
-    $init_data = params
-    $receive_block_chain = BlockChain.new
-    block = $receive_block_chain.last_block
+    $receive_block_chain = BlockChain.new params
     $db.transaction do
       $db['root'] = $receive_block_chain
-      p $db['root']
     end
     $init_flg = true
     return JSON.generate({"status" => true, "msg" => "Success"})
@@ -116,7 +89,7 @@ post '/send' do
   return JSON.generate({"status" => false, "msg" => "Blockchain doesn't exist"}) unless is_blockchain_exist?
   return JSON.generate({"status" => false, "msg" => "You do not steal other's property"}) if params[:amount].to_i < 0
   return JSON.generate({"status" => false, "msg" => "You can't send yourself"}) if params[:from] == params[:to]
-  return JSON.generate({"status" => false, "msg" => "You can't send yourself"}) if params[:from] == "" || params[:to] == ""
+  return JSON.generate({"status" => false, "msg" => "Cannot be blank user's id"}) if params[:from] == "" || params[:to] == ""
   args = {block_chain: $receive_block_chain}
   if (queryAmount(params[:from]).to_i - params[:amount].to_i) < 0
     return JSON.generate({"status" => false, "msg" => "There is not enough money"})

@@ -30,14 +30,14 @@ class Block
 
   class << self
     # ジェネシス・ブロックを作成する
-    def create_genesis_block
+    def create_genesis_block init_data
       # address = "62e907b15cbf27d5425399ebf6f0fb50ebb88f18"
       # timestamp = Time.parse("2009/1/3").to_i
       timestamp = Time.now.to_i
       previous_hash = '0'
       # genesis_coinbase_data = "The Times 03/Jan/2009 Chancellor on brink of second bailout for banks"
       # transactions = [Transaction.new_coinbase_transaction(address, genesis_coinbase_data)]
-      transactions = {from: "SATOSHI NAKAMOTO", to: $init_data[:to], amount: $init_data[:amount], comment: "Initialize Distribution"}
+      transactions = {from: "SATOSHI NAKAMOTO", to: init_data[:to], amount: init_data[:amount], comment: "Initialize Distribution"}
       pow = ProofOfWork.new(
         timestamp: timestamp,
         previous_hash: previous_hash,
