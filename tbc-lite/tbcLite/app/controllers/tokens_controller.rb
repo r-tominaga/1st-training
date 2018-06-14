@@ -18,7 +18,7 @@ class TokensController < ApplicationController
     req = Net::HTTP::Post.new(uri.path)
     req.set_form_data({'to' => params[:user][:user_name], 'amount' => params[:amount]})
     @res = ActiveSupport::JSON.decode(http.request(req).body)
-    render 'initDist'
+    redirect_to initDist_path
   end
 
   def indexSendToken
