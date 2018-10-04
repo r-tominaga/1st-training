@@ -5,7 +5,6 @@ require_relative 'transaction'
 require_relative 'proof_of_work'
 require_relative '../main'
 
-
 class Block
   attr_reader :hash, :height, :transactions, :timestamp, :nonce, :previous_hash
 

@@ -23,7 +23,6 @@ class BlockChain
     height = prev_block.height + 1
     timestamp = Time.now.to_i
     previous_hash = prev_block.hash
-    # TODO: transactions → merkle_root
     pow = ProofOfWork.new(
       timestamp: timestamp,
       previous_hash: previous_hash,

@@ -86,10 +86,16 @@ get '/queryAll' do
 end
 
 post '/send' do
-  return JSON.generate({"status" => false, "msg" => "Blockchain doesn't exist"}) unless is_blockchain_exist?
-  return JSON.generate({"status" => false, "msg" => "You do not steal other's property"}) if params[:amount].to_i < 0
-  return JSON.generate({"status" => false, "msg" => "You can't send yourself"}) if params[:from] == params[:to]
-  return JSON.generate({"status" => false, "msg" => "Cannot be blank user's id"}) if params[:from] == "" || params[:to] == ""
+  unless is_blockchain_exist?
+    return JSON.generate({"status" => false, "msg" => "Blockchain doesn't exist"})
+  elsif params[:amount].to_i < 0
+    return JSON.generate({"status" => false, "msg" => "You do not steal other's property"})
+  elsif params[:from] == params[:to]
+    return JSON.generate({"status" => false, "msg" => "You can't send yourself"})
+  elsif params[:from] == "" || params[:to] == ""
+    return JSON.generate({"status" => false, "msg" => "Cannot be blank user's id"})
+  end
+
   args = {block_chain: $receive_block_chain}
   if (queryAmount(params[:from]).to_i - params[:amount].to_i) < 0
     return JSON.generate({"status" => false, "msg" => "There is not enough money"})
